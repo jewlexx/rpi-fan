@@ -20,6 +20,6 @@ fn App() -> Html {
     html! { <Index /> }
 }
 
-pub fn run_app() {
+fn main() {
     yew::Renderer::<App>::new().render();
 }
