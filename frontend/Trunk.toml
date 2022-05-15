@@ -1,6 +1,5 @@
 [build]
 dist = "dist"
-public_url = "/assets"
 filehash = true
 
 [serve]
