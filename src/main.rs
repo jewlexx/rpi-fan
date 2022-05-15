@@ -1,17 +1,12 @@
 use rppal::{gpio::Gpio, system::DeviceInfo};
 
+use backend::run_server;
+
 const FAN_PIN: u8 = 14;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let info = DeviceInfo::new()?;
-    let model = info.model();
-
-    println!("{}", model);
-
-    let mut pin = Gpio::new()?.get(FAN_PIN)?.into_output();
-
-    pin.toggle();
+    let server_thread = run_server();
 
     Ok(())
 }

@@ -12,11 +12,9 @@ members = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.57"
 tokio = { version = "1.18.2", features = ["full"] }
-
-[dependencies.anyhow]
-version = "1.0.57"
-features = ["backtrace"]
+backend = { version = "0.1.0", path = "backend" }
 
 [dependencies.rppal]
 git = "https://github.com/golemparts/rppal.git"
