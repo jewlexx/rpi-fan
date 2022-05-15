@@ -23,16 +23,8 @@ use consts::*;
 use error::*;
 use state::{set_fan_state, FanState};
 
-fn get_tmp_inner() -> Result<i128, FanError> {
-    let mut file = std::fs::File::open(TEMPERATURE_PATH).map_err(FanError::IOError)?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)
-        .map_err(FanError::IOError)?;
-
-    contents
-        .trim()
-        .parse::<i128>()
-        .map_err(FanError::ParseIntError)
+fn get_tmp_inner() -> i128 {
+    *TEMPERATURE.lock()
 }
 
 pub fn get_pin() -> Result<OutputPin, FanError> {
@@ -47,13 +39,8 @@ pub fn get_pin() -> Result<OutputPin, FanError> {
 }
 
 #[get("/temp")]
-fn get_tmp() -> Result<String, ResponseError> {
-    let temp = get_tmp_inner();
-
-    match temp {
-        Ok(t) => Ok(t.to_string()),
-        Err(e) => Err(Custom(Status::InternalServerError, e)),
-    }
+fn get_tmp() -> String {
+    get_tmp_inner().to_string()
 }
 
 #[get("/fan/<state>")]
