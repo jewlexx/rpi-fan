@@ -21,17 +21,18 @@ mod state;
 
 use consts::*;
 use error::*;
-use state::{set_fan_state, FanState};
+use state::{set_fan_state, Config, FanState};
 
 fn get_tmp_inner() -> i128 {
     *TEMPERATURE.lock()
 }
 
 pub fn get_pin() -> Result<OutputPin, FanError> {
+    let cfg = Config::get();
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
 
     let pin = gpio
-        .get(FAN_PIN)
+        .get(cfg.fan_pin)
         .map_err(FanError::GPIOError)?
         .into_output();
 
@@ -45,6 +46,7 @@ fn get_tmp() -> String {
 
 #[get("/fan/<state>")]
 fn set_fan(state: String) -> Result<String, ResponseError> {
+    let mut cfg = Config::get();
     // These will actually mutate the fan's state
     let new_state: Option<FanState> = match state.as_str() {
         "on" | "off" => Some(state.into()),
@@ -52,22 +54,24 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
         _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
     };
 
-    *AUTO_TEMP.lock() = false;
+    cfg.auto = false;
+    cfg.save().map_err(FanError::from)?;
 
     Ok(format!("Fan set to {}", set_fan_state(new_state)?))
 }
 
 #[get("/auto/<state>")]
 fn set_auto(state: String) -> Result<String, ResponseError> {
-    let mut auto_state = AUTO_TEMP.lock();
+    let mut cfg = Config::get();
 
     let new_state: bool = match state.as_str() {
         "on" | "off" => state == "on",
-        "toggle" => !*auto_state,
+        "toggle" => !cfg.auto,
         _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
     };
 
-    *auto_state = new_state;
+    cfg.auto = new_state;
+    cfg.save().map_err(FanError::from)?;
 
     Ok(format!("Auto set to {}", new_state))
 }

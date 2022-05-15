@@ -7,16 +7,13 @@ use serde::{Deserialize, Serialize};
 use strum::Display;
 use thiserror::Error as IsError;
 
-use crate::{
-    consts::{CONFIG_DIR, FAN_STATE},
-    error::FanError,
-    get_pin,
-};
+use crate::{consts::CONFIG_DIR, error::FanError, get_pin};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub struct Config {
     pub fan_pin: u8,
     pub fan_state: FanState,
+    pub max_temp: i128,
     pub auto: bool,
 }
 
@@ -35,6 +32,7 @@ impl Default for Config {
         Config {
             fan_pin: 14,
             fan_state: FanState::Off,
+            max_temp: 80000,
             auto: true,
         }
     }
@@ -65,6 +63,12 @@ impl Config {
         }
     }
 
+    pub fn get() -> Self {
+        use crate::consts::CONFIG;
+
+        *CONFIG.lock()
+    }
+
     fn write_config(cfg: &Config) -> Result<(), ConfigError> {
         let cfg_path = CONFIG_DIR.join("config.json");
         let mut file = File::create(cfg_path).map_err(ConfigError::Write)?;
@@ -90,12 +94,12 @@ impl Config {
 }
 
 pub fn set_fan_state(state_opt: Option<FanState>) -> Result<FanState, FanError> {
-    let mut fan_state = FAN_STATE.lock();
+    let mut cfg = Config::get();
     let mut pin = get_pin()?;
 
     let updated_state: FanState = if let Some(state) = state_opt {
-        if *fan_state == state {
-            return Ok(*fan_state);
+        if cfg.fan_state == state {
+            return Ok(cfg.fan_state);
         }
 
         if bool::from(state) {
@@ -111,7 +115,8 @@ pub fn set_fan_state(state_opt: Option<FanState>) -> Result<FanState, FanError> 
         pin.is_set_high().into()
     };
 
-    *fan_state = updated_state;
+    cfg.fan_state = updated_state;
+    cfg.save()?;
 
     Ok(updated_state)
 }

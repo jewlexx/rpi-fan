@@ -4,6 +4,8 @@ use rocket::{http::Status, response::status::Custom};
 use rppal::gpio::Error as GPIOError;
 use thiserror::Error as IsError;
 
+use crate::state::ConfigError;
+
 #[derive(Debug, IsError)]
 pub enum FanError {
     #[error("Failed to interact with system IO")]
@@ -14,6 +16,8 @@ pub enum FanError {
     GPIOError(GPIOError),
     #[error("The given state is invalid")]
     InvalidState(String),
+    #[error("Failed to interact with config")]
+    ConfigError(#[from] ConfigError),
 }
 
 pub type ResponseError = Custom<FanError>;

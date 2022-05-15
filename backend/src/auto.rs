@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::{
-    consts::{MAX_TEMP, TEMPERATURE, TEMPERATURE_PATH},
+    consts::{CONFIG, TEMPERATURE, TEMPERATURE_PATH},
     state::{set_fan_state, FanState},
 };
 
@@ -18,7 +18,7 @@ pub fn begin_monitoring() -> JoinHandle<()> {
         let temp = contents.trim().parse::<i128>().unwrap();
         *TEMPERATURE.lock() = temp;
 
-        let res = if temp > MAX_TEMP {
+        let res = if temp > (*CONFIG.lock()).max_temp {
             set_fan_state(Some(FanState::On))
         } else {
             set_fan_state(Some(FanState::Off))
