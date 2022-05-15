@@ -64,6 +64,17 @@ impl Config {
             Ok(cfg)
         }
     }
+
+    pub fn save(&self) -> Result<(), ConfigError> {
+        let cfg_path = CONFIG_DIR.join("config.json");
+        let mut file = File::create(cfg_path).map_err(ConfigError::Write)?;
+
+        let serialized = serde_json::to_string(&self)?;
+        file.write_all(serialized.as_bytes())
+            .map_err(ConfigError::Write)?;
+
+        Ok(())
+    }
 }
 
 pub fn set_fan_state(state_opt: Option<FanState>) -> Result<FanState, FanError> {
