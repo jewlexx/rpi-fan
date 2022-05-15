@@ -6,15 +6,22 @@ WORKDIR /src
 
 RUN rustup toolchain add nightly
 RUN rustup default nightly
+RUN rustup target add wasm32-unknown-unknown
+
+RUN cargo update
 
 RUN cargo install trunk
 
 WORKDIR /src/frontend
 
-RUN trunk build
-
-COPY ./dist /
+RUN trunk build --release
 
 WORKDIR /src
 
 RUN cargo build --release
+
+RUN mkdir /www
+
+RUN cp ./dist /www -r
+
+ENTRYPOINT [ "bash" ]

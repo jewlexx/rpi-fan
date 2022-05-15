@@ -1,5 +1,5 @@
 [build]
-dist = "dist"
+dist = "../dist"
 filehash = true
 
 [serve]
