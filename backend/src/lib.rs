@@ -7,6 +7,7 @@ use std::{
 };
 
 use rocket::{http::Status, response::status::Custom};
+use rocket_contrib::serve::StaticFiles;
 use rppal::{
     gpio::{Error as GPIOError, Gpio},
     system::DeviceInfo,
@@ -89,8 +90,10 @@ pub fn run_server() -> JoinHandle<LaunchError> {
     thread::spawn(|| {
         let routes = routes![get_tmp, set_fan];
 
-        let ign = rocket::ignite();
+        let ign = rocket::ignite()
+            .mount("/api", routes)
+            .mount("/", StaticFiles::from("/www"));
 
-        ign.mount("/", routes).launch()
+        ign.launch()
     })
 }

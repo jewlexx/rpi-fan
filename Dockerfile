@@ -10,3 +10,11 @@ RUN rustup default nightly
 RUN cargo install trunk
 
 RUN cargo build --release
+
+WORKDIR /src/frontend
+
+RUN trunk build
+
+WORKDIR /src
+
+COPY /src/fontend/dist /src/www
