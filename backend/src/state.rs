@@ -43,9 +43,7 @@ impl Config {
         let cfg_path = CONFIG_DIR.join("config.json");
 
         if !cfg_path.exists() {
-            let cfg = Config::reset();
-
-            return Ok(cfg);
+            return Config::reset();
         }
 
         let mut file = File::open(cfg_path).map_err(ConfigError::Write)?;
