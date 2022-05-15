@@ -65,6 +65,8 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
         _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
     };
 
+    *AUTO_TEMP.lock() = false;
+
     Ok(format!("Fan set to {}", set_fan_state(new_state)?))
 }
 
