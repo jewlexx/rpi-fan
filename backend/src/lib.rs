@@ -66,6 +66,10 @@ fn get_tmp() -> Result<String, ResponseError> {
 fn set_fan(state: String) -> Result<String, ResponseError> {
     let mut fan_state = FAN_STATE.lock();
 
+    if state == "state" {
+        return Ok(if *fan_state { "on" } else { "off" }.into());
+    }
+
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
     let mut pin = gpio
         .get(FAN_PIN)
