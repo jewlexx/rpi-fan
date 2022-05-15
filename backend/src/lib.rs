@@ -9,6 +9,7 @@ use std::{
 use rocket::{http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
 use rppal::gpio::{Error as GPIOError, Gpio};
+use strum::Display;
 use thiserror::Error as IsError;
 
 pub use rocket::error::{LaunchError, LaunchErrorKind};
@@ -30,6 +31,32 @@ enum FanError {
     GPIOError(GPIOError),
     #[error("The given state is invalid")]
     InvalidState(String),
+}
+
+#[derive(Debug, Display)]
+#[strum(serialize_all = "lowercase")]
+pub enum FanState {
+    On,
+    Off,
+}
+
+impl From<bool> for FanState {
+    fn from(state: bool) -> Self {
+        if state {
+            FanState::On
+        } else {
+            FanState::Off
+        }
+    }
+}
+
+impl From<FanState> for bool {
+    fn from(state: FanState) -> Self {
+        match state {
+            FanState::On => true,
+            FanState::Off => false,
+        }
+    }
 }
 
 fn get_tmp_inner() -> Result<i128, FanError> {
