@@ -83,7 +83,7 @@ pub fn run_server() -> JoinHandle<LaunchError> {
 
         let ign = rocket::ignite()
             .mount("/api", routes)
-            .mount("/", StaticFiles::from("/www"));
+            .mount("/", StaticFiles::from("./www"));
 
         ign.launch()
     })
