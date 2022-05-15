@@ -10,7 +10,7 @@ enum StateMsg {
 
 #[function_component]
 pub fn Index() -> Html {
-    let temp = use_state(|| 0.);
+    let temp = use_state(|| 0i128);
 
     let toggle_fan = use_callback(
         |_, _| {
@@ -42,7 +42,7 @@ pub fn Index() -> Html {
                         .text()
                         .await
                         .unwrap()
-                        .parse::<f32>()
+                        .parse::<i128>()
                         .unwrap();
 
                     temp.set(new_temp);
@@ -58,7 +58,7 @@ pub fn Index() -> Html {
     html! {
         <div class="root">
             <h1>{ "Welcome back to your Raspberry Pi" }</h1>
-            <desc>{ "Its current temperature is: " } { *temp } { " Celsius" }</desc>
+            <desc>{ "Its current temperature is: " } { *temp / 1000 } { " Celsius" }</desc>
             <button onclick={toggle_fan}>{ "Toggle Fan" }</button>
         </div>
     }
