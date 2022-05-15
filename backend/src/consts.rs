@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use directories::ProjectDirs;
 use parking_lot::{const_mutex, Mutex};
 
-use crate::state::FanState;
+use crate::state::{Config, FanState};
 
 lazy_static! {
     pub static ref DIRS: ProjectDirs = {
@@ -11,6 +11,7 @@ lazy_static! {
             .expect("failed to find project directories")
     };
     pub static ref CONFIG_DIR: PathBuf = DIRS.config_dir().into();
+    pub static ref CONFIG: Mutex<Config> = const_mutex(Config::new().unwrap());
 }
 
 // This is the path to the file that holds temp information
