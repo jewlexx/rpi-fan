@@ -16,10 +16,6 @@ anyhow = "1.0.57"
 tokio = { version = "1.18.2", features = ["full"] }
 backend = { version = "0.1.0", path = "backend" }
 
-[dependencies.rppal]
-git = "https://github.com/golemparts/rppal.git"
-rev = "54e54cbe17293044eaf77bc599631c0ecc572f91"
-
 [profile.release]
 strip = true
 opt-level = "s"

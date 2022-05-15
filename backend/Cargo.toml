@@ -8,4 +8,7 @@ edition = "2021"
 [dependencies]
 thiserror = "1.0.31"
 rocket = "0.4.10"
-strum = { version = "0.24.0", features = ["derive"] }
+
+[dependencies.rppal]
+git = "https://github.com/golemparts/rppal.git"
+rev = "54e54cbe17293044eaf77bc599631c0ecc572f91"

@@ -1,8 +1,4 @@
-use rppal::{gpio::Gpio, system::DeviceInfo};
-
 use backend::run_server;
-
-const FAN_PIN: u8 = 14;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
