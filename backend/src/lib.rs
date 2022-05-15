@@ -87,7 +87,7 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
 
 pub fn run_server() -> JoinHandle<LaunchError> {
     thread::spawn(|| {
-        let routes = routes![get_tmp];
+        let routes = routes![get_tmp, set_fan];
 
         let ign = rocket::ignite();
 
