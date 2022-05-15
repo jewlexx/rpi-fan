@@ -65,15 +65,27 @@ impl Config {
         }
     }
 
-    pub fn save(&self) -> Result<(), ConfigError> {
+    fn write_config(cfg: &Config) -> Result<(), ConfigError> {
         let cfg_path = CONFIG_DIR.join("config.json");
         let mut file = File::create(cfg_path).map_err(ConfigError::Write)?;
 
-        let serialized = serde_json::to_string(&self)?;
+        let serialized = serde_json::to_string(cfg)?;
         file.write_all(serialized.as_bytes())
             .map_err(ConfigError::Write)?;
 
         Ok(())
+    }
+
+    pub fn save(&self) -> Result<(), ConfigError> {
+        Config::write_config(self)
+    }
+
+    pub fn reset() -> Result<Self, ConfigError> {
+        let cfg = Config::default();
+
+        Config::write_config(&cfg)?;
+
+        Ok(cfg)
     }
 }
 
