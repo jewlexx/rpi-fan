@@ -5,9 +5,11 @@ use std::{
     thread::{self, JoinHandle},
 };
 
-use rocket::{error::LaunchError, http::Status, response::status::Custom};
+use rocket::{http::Status, response::status::Custom};
 use strum::Display as SDisplay;
 use thiserror::Error as IsError;
+
+pub use rocket::error::{LaunchError, LaunchErrorKind};
 
 #[macro_use]
 extern crate rocket;
