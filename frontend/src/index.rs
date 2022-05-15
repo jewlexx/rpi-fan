@@ -41,7 +41,7 @@ pub fn Index() -> Html {
     html! {
         <div class="root">
             <h1>{ "Welcome back to your Raspberry Pi" }</h1>
-            <desc>{ "Its current temperature is: " } { *temp }</desc>
+            <desc>{ "Its current temperature is: " } { *temp } { " Celsius" }</desc>
         </div>
     }
 }
