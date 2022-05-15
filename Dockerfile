@@ -4,6 +4,6 @@ COPY . /src
 
 WORKDIR /src
 
-RUN rustup target add aarch64-unknown-linux-musl
+RUN cargo install trunk
 
 RUN cargo build --release

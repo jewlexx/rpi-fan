@@ -19,3 +19,7 @@ pub enum Routes {
 fn App() -> Html {
     html! { <Index /> }
 }
+
+pub fn run_app() {
+    yew::Renderer::<App>::new().render();
+}
