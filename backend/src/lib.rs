@@ -11,8 +11,12 @@ pub use rocket::error::{LaunchError, LaunchErrorKind};
 #[macro_use]
 extern crate rocket;
 
+#[macro_use]
+extern crate lazy_static;
+
 pub mod auto;
 mod consts;
+mod dirs;
 mod error;
 mod state;
 

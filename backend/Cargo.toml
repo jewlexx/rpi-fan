@@ -11,6 +11,8 @@ rocket = "0.4.10"
 rocket_contrib = "0.4.10"
 parking_lot = "0.12.0"
 strum = { version = "0.24.0", features = ["derive"] }
+directories = "4.0.1"
+lazy_static = "1.4.0"
 
 [dependencies.rppal]
 git = "https://github.com/golemparts/rppal.git"
