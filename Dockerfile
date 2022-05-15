@@ -19,4 +19,6 @@ RUN cp /src/target/release/rpi-fan /www/rpi-fan
 
 RUN rm -rf /src
 
+EXPOSE 8000
+
 CMD [ "/www/rpi-fan" ]
