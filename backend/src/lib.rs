@@ -49,6 +49,8 @@ pub fn run_server() -> JoinHandle<LaunchError> {
     thread::spawn(|| {
         let routes = routes![get_tmp];
 
-        rocket::ignite().mount("/", routes).launch()
+        let ign = rocket::ignite();
+
+        ign.mount("/", routes).launch()
     })
 }
