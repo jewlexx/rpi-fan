@@ -2,7 +2,7 @@ use strum::Display;
 
 use crate::{consts::FAN_STATE, error::FanError, get_pin};
 
-pub fn set_fan(state_opt: Option<FanState>) -> Result<(), FanError> {
+pub fn set_fan_state(state_opt: Option<FanState>) -> Result<FanState, FanError> {
     let mut pin = get_pin()?;
 
     let updated_state: FanState = if let Some(state) = state_opt {
@@ -21,7 +21,7 @@ pub fn set_fan(state_opt: Option<FanState>) -> Result<(), FanError> {
 
     *FAN_STATE.lock() = updated_state;
 
-    Ok(())
+    Ok(updated_state)
 }
 
 #[derive(Debug, Clone, Copy, Display)]

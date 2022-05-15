@@ -21,7 +21,7 @@ mod state;
 
 use consts::*;
 use error::*;
-use state::FanState;
+use state::{set_fan_state, FanState};
 
 fn get_tmp_inner() -> Result<i128, FanError> {
     let mut file = std::fs::File::open(TEMPERATURE_PATH).map_err(FanError::IOError)?;
@@ -58,43 +58,14 @@ fn get_tmp() -> Result<String, ResponseError> {
 
 #[get("/fan/<state>")]
 fn set_fan(state: String) -> Result<String, ResponseError> {
-    let mut fan_state = FAN_STATE.lock();
-
-    let fan_state_bool: bool = (*fan_state).into();
-
-    // This will return the fan's current state
-    if state == "state" {
-        return Ok(if fan_state_bool { "on" } else { "off" }.into());
-    }
-
-    let gpio = Gpio::new().map_err(FanError::GPIOError)?;
-    let mut pin = gpio
-        .get(FAN_PIN)
-        .map_err(FanError::GPIOError)?
-        .into_output();
-
     // These will actually mutate the fan's state
-    match state.as_str() {
-        "on" => {
-            if !fan_state_bool {
-                *fan_state = FanState::On;
-                pin.set_high()
-            }
-        }
-        "off" => {
-            if fan_state_bool {
-                *fan_state = FanState::Off;
-                pin.set_low()
-            }
-        }
-        "toggle" => pin.toggle(),
+    let new_state: Option<FanState> = match state.as_str() {
+        "on" | "off" => Some(state.into()),
+        "toggle" => None,
         _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
-    }
+    };
 
-    Ok(format!(
-        "Fan set to {}",
-        if pin.is_set_high() { "on" } else { "off" }
-    ))
+    Ok(format!("Fan set to {}", set_fan_state(new_state)?))
 }
 
 pub fn run_server() -> JoinHandle<LaunchError> {
