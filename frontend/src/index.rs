@@ -2,12 +2,6 @@ use gloo_timers::callback::Interval;
 use reqwasm::http::Request;
 use yew::prelude::*;
 
-#[derive(Debug, Clone, Copy)]
-enum StateMsg {
-    SetTemp(f32),
-    SetState(bool),
-}
-
 #[function_component]
 pub fn Index() -> Html {
     let temp = use_state(|| 0i128);

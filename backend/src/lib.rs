@@ -8,10 +8,7 @@ use std::{
 
 use rocket::{http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
-use rppal::{
-    gpio::{Error as GPIOError, Gpio},
-    system::DeviceInfo,
-};
+use rppal::gpio::{Error as GPIOError, Gpio};
 use thiserror::Error as IsError;
 
 pub use rocket::error::{LaunchError, LaunchErrorKind};
