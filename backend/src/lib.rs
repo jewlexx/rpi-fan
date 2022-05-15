@@ -9,7 +9,6 @@ use std::{
 use rocket::{http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
 use rppal::gpio::{Error as GPIOError, Gpio};
-use strum::Display;
 use thiserror::Error as IsError;
 
 pub use rocket::error::{LaunchError, LaunchErrorKind};
@@ -18,8 +17,10 @@ pub use rocket::error::{LaunchError, LaunchErrorKind};
 extern crate rocket;
 
 mod consts;
+mod state;
 
 use consts::*;
+use state::FanState;
 
 #[derive(Debug, IsError)]
 enum FanError {
@@ -31,32 +32,6 @@ enum FanError {
     GPIOError(GPIOError),
     #[error("The given state is invalid")]
     InvalidState(String),
-}
-
-#[derive(Debug, Display)]
-#[strum(serialize_all = "lowercase")]
-pub enum FanState {
-    On,
-    Off,
-}
-
-impl From<bool> for FanState {
-    fn from(state: bool) -> Self {
-        if state {
-            FanState::On
-        } else {
-            FanState::Off
-        }
-    }
-}
-
-impl From<FanState> for bool {
-    fn from(state: FanState) -> Self {
-        match state {
-            FanState::On => true,
-            FanState::Off => false,
-        }
-    }
 }
 
 fn get_tmp_inner() -> Result<i128, FanError> {
@@ -93,8 +68,11 @@ fn get_tmp() -> Result<String, ResponseError> {
 fn set_fan(state: String) -> Result<String, ResponseError> {
     let mut fan_state = FAN_STATE.lock();
 
+    let fan_state_bool: bool = (*fan_state).into();
+
+    // This will return the fan's current state
     if state == "state" {
-        return Ok(if *fan_state { "on" } else { "off" }.into());
+        return Ok(if fan_state_bool { "on" } else { "off" }.into());
     }
 
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
@@ -103,16 +81,17 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
         .map_err(FanError::GPIOError)?
         .into_output();
 
+    // These will actually mutate the fan's state
     match state.as_str() {
         "on" => {
-            if !*fan_state {
-                *fan_state = true;
+            if !fan_state_bool {
+                *fan_state = FanState::On;
                 pin.set_high()
             }
         }
         "off" => {
-            if *fan_state {
-                *fan_state = false;
+            if fan_state_bool {
+                *fan_state = FanState::Off;
                 pin.set_low()
             }
         }
