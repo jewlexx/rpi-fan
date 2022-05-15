@@ -2,11 +2,9 @@
 
 use std::thread::{self, JoinHandle};
 
-use rocket::{http::Status, response::status::Custom};
+use rocket::{error::LaunchError, http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
 use rppal::gpio::{Gpio, OutputPin};
-
-pub use rocket::error::{LaunchError, LaunchErrorKind};
 
 #[macro_use]
 extern crate rocket;
@@ -14,20 +12,23 @@ extern crate rocket;
 #[macro_use]
 extern crate lazy_static;
 
-pub mod auto;
+mod auto;
 mod consts;
 mod error;
 mod state;
 
 use consts::*;
 use error::*;
-use state::{set_fan_state, Config, FanState};
+use state::{set_fan_state, FanState};
+
+pub use auto::begin_monitoring;
+pub use state::Config;
 
 fn get_tmp_inner() -> i128 {
     *TEMPERATURE.lock()
 }
 
-pub fn get_pin() -> Result<OutputPin, FanError> {
+fn get_pin() -> Result<OutputPin, FanError> {
     let cfg = Config::get();
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
 
