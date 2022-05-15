@@ -1,5 +1,3 @@
-[build]
-target = "aarch64-unknown-linux-musl"
-
+# Remove these lines if you run into issues during compilation
 [target.aarch64-unknown-linux-musl]
 linker = "lld"
