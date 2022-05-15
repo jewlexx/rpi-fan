@@ -15,8 +15,3 @@ members = [
 anyhow = "1.0.57"
 tokio = { version = "1.18.2", features = ["full"] }
 backend = { version = "0.1.0", path = "backend" }
-
-[profile.release]
-strip = true
-opt-level = "s"
-lto = true
