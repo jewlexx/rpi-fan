@@ -1,9 +1,6 @@
 #![feature(decl_macro)]
 
-use std::{
-    io::Read,
-    thread::{self, JoinHandle},
-};
+use std::thread::{self, JoinHandle};
 
 use rocket::{http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
