@@ -10,11 +10,11 @@ RUN rustup target add wasm32-unknown-unknown
 
 RUN cargo update
 
-RUN cargo install trunk
 
 WORKDIR /src/frontend
 
-RUN trunk build --release
+RUN wget -qO- https://github.com/thedodd/trunk/releases/download/v0.15.0/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+RUN ./trunk build --release
 
 WORKDIR /src
 
@@ -24,4 +24,6 @@ RUN mkdir /www
 
 RUN cp ./dist /www -r
 
-ENTRYPOINT [ "bash" ]
+RUN cp ./target/release/rpi-fan /src/rpi-fan
+
+CMD [ "/src/rpi-fan" ]

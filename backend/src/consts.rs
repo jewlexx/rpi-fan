@@ -6,18 +6,10 @@ use parking_lot::{const_mutex, Mutex};
 use crate::state::Config;
 
 lazy_static! {
-    pub static ref DIRS: ProjectDirs = {
-        ProjectDirs::from("", "jewelexx", "fan-control")
-            .expect("failed to find project directories")
-    };
-    pub static ref CONFIG_DIR: PathBuf = {
-        let dir: PathBuf = DIRS.config_dir().into();
-        if !dir.exists() {
-            std::fs::create_dir_all(&dir).unwrap();
-        }
-
-        dir
-    };
+    pub static ref DIRS: ProjectDirs = ProjectDirs::from("", "jewelexx", "fan-control")
+        .expect("failed to find project directories");
+    pub static ref CONFIG_DIR: PathBuf =
+        std::env::current_dir().expect("failed to get current directory");
     pub static ref CONFIG: Mutex<Config> = const_mutex(Config::new().unwrap());
 }
 
