@@ -1,5 +1,3 @@
-#![feature(never_type)]
-
 use rppal::{gpio::Gpio, system::DeviceInfo};
 
 const FAN_PIN: u8 = 14;
