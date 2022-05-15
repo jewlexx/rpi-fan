@@ -80,7 +80,9 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
         _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
     }
 
-    Ok(format!("Fan {}", state))
+    let new_state = if pin.is_set_high() { "on" } else { "off" };
+
+    Ok(format!("Fan set to {}", new_state))
 }
 
 pub fn run_server() -> JoinHandle<LaunchError> {
