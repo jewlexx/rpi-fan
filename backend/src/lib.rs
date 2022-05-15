@@ -45,7 +45,7 @@ fn get_tmp() -> Result<String, ResponseError> {
     }
 }
 
-pub async fn run_server() -> JoinHandle<LaunchError> {
+pub fn run_server() -> JoinHandle<LaunchError> {
     thread::spawn(|| {
         let routes = routes![get_tmp];
 
