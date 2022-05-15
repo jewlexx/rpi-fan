@@ -1,9 +1,13 @@
 use std::{
+    io::Read,
     thread::{self, JoinHandle},
     time::Duration,
 };
 
-use crate::consts::{FAN_STATE, MAX_TEMP, TEMPERATURE, TEMPERATURE_PATH};
+use crate::{
+    consts::{MAX_TEMP, TEMPERATURE, TEMPERATURE_PATH},
+    state::{set_fan_state, FanState},
+};
 
 pub fn begin_monitoring() -> JoinHandle<()> {
     thread::spawn(|| loop {
@@ -12,14 +16,16 @@ pub fn begin_monitoring() -> JoinHandle<()> {
         file.read_to_string(&mut contents).unwrap();
 
         let temp = contents.trim().parse::<i128>().unwrap();
-        TEMPERATURE
-            .lock()
-            .store(temp, std::sync::atomic::Ordering::SeqCst);
+        *TEMPERATURE.lock() = temp;
 
-        if temp > MAX_TEMP {
-            FAN_STATE.lock().set_state(crate::state::FanState::On);
+        let res = if temp > MAX_TEMP {
+            set_fan_state(Some(FanState::On))
         } else {
-            FAN_STATE.lock().set_state(crate::state::FanState::Off);
+            set_fan_state(Some(FanState::Off))
+        };
+
+        if let Err(e) = res {
+            println!("{}", e);
         }
 
         thread::sleep(Duration::from_secs(1));

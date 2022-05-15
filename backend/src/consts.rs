@@ -12,3 +12,5 @@ pub const MAX_TEMP: i128 = 80000;
 pub static FAN_STATE: Mutex<FanState> = const_mutex(FanState::Off);
 
 pub static TEMPERATURE: Mutex<i128> = const_mutex(0);
+
+pub static AUTO_TEMP: Mutex<bool> = const_mutex(true);
