@@ -9,6 +9,7 @@ edition = "2021"
 thiserror = "1.0.31"
 rocket = "0.4.10"
 rocket_contrib = "0.4.10"
+parking_lot = "0.12.0"
 
 [dependencies.rppal]
 git = "https://github.com/golemparts/rppal.git"

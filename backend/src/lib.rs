@@ -16,10 +16,9 @@ pub use rocket::error::{LaunchError, LaunchErrorKind};
 #[macro_use]
 extern crate rocket;
 
-// This is the path to the file that holds temp information
-const TEMPERATURE_PATH: &str = "/sys/class/thermal/thermal_zone0/temp";
+mod consts;
 
-const FAN_PIN: u8 = 14;
+use consts::*;
 
 #[derive(Debug, IsError)]
 enum FanError {
@@ -65,6 +64,8 @@ fn get_tmp() -> Result<String, ResponseError> {
 
 #[get("/fan/<state>")]
 fn set_fan(state: String) -> Result<String, ResponseError> {
+    let mut fan_state = FAN_STATE.lock();
+
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
     let mut pin = gpio
         .get(FAN_PIN)
@@ -72,8 +73,18 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
         .into_output();
 
     match state.as_str() {
-        "on" => pin.set_high(),
-        "off" => pin.set_low(),
+        "on" => {
+            if !*fan_state {
+                *fan_state = true;
+                pin.set_high()
+            }
+        }
+        "off" => {
+            if *fan_state {
+                *fan_state = false;
+                pin.set_low()
+            }
+        }
         "toggle" => pin.toggle(),
         _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
     }
