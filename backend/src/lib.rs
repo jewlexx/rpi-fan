@@ -54,9 +54,24 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
     Ok(format!("Fan set to {}", set_fan_state(new_state)?))
 }
 
+#[get("/auto/<state>")]
+fn set_auto(state: String) -> Result<String, ResponseError> {
+    let mut auto_state = AUTO_TEMP.lock();
+
+    let new_state: bool = match state.as_str() {
+        "on" | "off" => state == "on",
+        "toggle" => !*auto_state,
+        _ => return Err(Custom(Status::BadRequest, FanError::InvalidState(state))),
+    };
+
+    *auto_state = new_state;
+
+    Ok(format!("Auto set to {}", new_state))
+}
+
 pub fn run_server() -> JoinHandle<LaunchError> {
     thread::spawn(|| {
-        let routes = routes![get_tmp, set_fan];
+        let routes = routes![get_tmp, set_fan, set_auto];
 
         let ign = rocket::ignite()
             .mount("/api", routes)
