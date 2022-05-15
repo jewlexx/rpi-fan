@@ -17,4 +17,4 @@ RUN trunk build
 
 WORKDIR /src
 
-COPY /src/fontend/dist /src/www
+COPY /src/fontend/dist /www
