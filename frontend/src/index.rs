@@ -12,6 +12,23 @@ enum StateMsg {
 pub fn Index() -> Html {
     let temp = use_state(|| 0.);
 
+    let toggle_fan = use_callback(
+        |_, _| {
+            wasm_bindgen_futures::spawn_local(async move {
+                let new_state = Request::get("/api/fan/toggle")
+                    .send()
+                    .await
+                    .unwrap()
+                    .text()
+                    .await
+                    .unwrap();
+
+                println!("Set fan to {}", new_state);
+            });
+        },
+        (),
+    );
+
     {
         let temp = temp.clone();
         use_effect(move || {
@@ -42,6 +59,7 @@ pub fn Index() -> Html {
         <div class="root">
             <h1>{ "Welcome back to your Raspberry Pi" }</h1>
             <desc>{ "Its current temperature is: " } { *temp } { " Celsius" }</desc>
+            <button onclick={toggle_fan}>{ "Toggle Fan" }</button>
         </div>
     }
 }
