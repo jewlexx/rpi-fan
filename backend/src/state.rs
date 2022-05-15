@@ -41,6 +41,13 @@ impl Default for Config {
 impl Config {
     pub fn new() -> Result<Self, ConfigError> {
         let cfg_path = CONFIG_DIR.join("config.json");
+
+        if !cfg_path.exists() {
+            let cfg = Config::reset();
+
+            return Ok(cfg);
+        }
+
         let mut file = File::open(cfg_path).map_err(ConfigError::Write)?;
 
         let mut file_contents = String::new();
