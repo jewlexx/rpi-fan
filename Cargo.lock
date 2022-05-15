@@ -107,6 +107,8 @@ dependencies = [
  "rocket",
  "rocket_contrib",
  "rppal",
+ "serde",
+ "serde_json",
  "strum",
  "thiserror",
 ]

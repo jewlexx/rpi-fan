@@ -16,7 +16,6 @@ extern crate lazy_static;
 
 pub mod auto;
 mod consts;
-mod dirs;
 mod error;
 mod state;
 

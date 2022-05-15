@@ -1,6 +1,17 @@
+use std::path::PathBuf;
+
+use directories::ProjectDirs;
 use parking_lot::{const_mutex, Mutex};
 
 use crate::state::FanState;
+
+lazy_static! {
+    pub static ref DIRS: ProjectDirs = {
+        ProjectDirs::from("", "jewelexx", "fan-control")
+            .expect("failed to find project directories")
+    };
+    pub static ref CONFIG_DIR: PathBuf = DIRS.config_dir().into();
+}
 
 // This is the path to the file that holds temp information
 pub const TEMPERATURE_PATH: &str = "/sys/class/thermal/thermal_zone0/temp";
