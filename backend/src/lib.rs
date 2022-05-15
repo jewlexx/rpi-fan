@@ -65,7 +65,7 @@ fn get_tmp() -> Result<String, ResponseError> {
     }
 }
 
-#[post("/fan/<state>")]
+#[get("/fan/<state>")]
 fn set_fan(state: String) -> Result<String, ResponseError> {
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
     let mut pin = gpio
