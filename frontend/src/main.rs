@@ -1,25 +1,7 @@
-use yew::prelude::*;
-use yew_router::Switch;
+mod app;
 
-mod index;
-
-use index::Index;
-
-pub enum FanMsg {
-    Toggle,
-}
-
-#[derive(Switch, Clone, Copy, Debug)]
-pub enum Routes {
-    #[to = "/"]
-    Index,
-}
-
-#[function_component]
-fn App() -> Html {
-    html! { <Index /> }
-}
+use app::App;
 
 fn main() {
-    yew::Renderer::<App>::new().render();
+    yew::start_app::<App>();
 }

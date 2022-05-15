@@ -2,26 +2,23 @@ use gloo_timers::callback::Interval;
 use reqwasm::http::Request;
 use yew::prelude::*;
 
-#[function_component]
-pub fn Index() -> Html {
+#[function_component(App)]
+pub fn app() -> Html {
     let temp = use_state(|| 0i128);
 
-    let toggle_fan = use_callback(
-        |_, _| {
-            wasm_bindgen_futures::spawn_local(async move {
-                let new_state = Request::get("/api/fan/toggle")
-                    .send()
-                    .await
-                    .unwrap()
-                    .text()
-                    .await
-                    .unwrap();
+    let toggle_fan = |_| {
+        wasm_bindgen_futures::spawn_local(async move {
+            let new_state = Request::get("/api/fan/toggle")
+                .send()
+                .await
+                .unwrap()
+                .text()
+                .await
+                .unwrap();
 
-                println!("Set fan to {}", new_state);
-            });
-        },
-        (),
-    );
+            println!("Set fan to {}", new_state);
+        });
+    };
 
     {
         let temp = temp.clone();
@@ -50,10 +47,10 @@ pub fn Index() -> Html {
     }
 
     html! {
-        <div class="root">
+        <main>
             <h1>{ "Welcome back to your Raspberry Pi" }</h1>
             <desc>{ "Its current temperature is: " } { *temp / 1000 } { " Celsius" }</desc>
             <button onclick={toggle_fan}>{ "Toggle Fan" }</button>
-        </div>
+        </main>
     }
 }
