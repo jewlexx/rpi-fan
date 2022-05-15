@@ -1,5 +1,29 @@
 use strum::Display;
 
+use crate::{consts::FAN_STATE, error::FanError, get_pin};
+
+pub fn set_fan(state_opt: Option<FanState>) -> Result<(), FanError> {
+    let mut pin = get_pin()?;
+
+    let updated_state: FanState = if let Some(state) = state_opt {
+        if bool::from(state) {
+            pin.set_high();
+        } else {
+            pin.set_low();
+        }
+
+        state
+    } else {
+        pin.toggle();
+
+        pin.is_set_high().into()
+    };
+
+    *FAN_STATE.lock() = updated_state;
+
+    Ok(())
+}
+
 #[derive(Debug, Clone, Copy, Display)]
 #[strum(serialize_all = "lowercase")]
 pub enum FanState {

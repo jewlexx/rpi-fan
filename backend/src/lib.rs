@@ -1,38 +1,27 @@
 #![feature(decl_macro)]
 
 use std::{
-    io::{Error as IOError, Read},
-    num::ParseIntError,
+    io::Read,
     thread::{self, JoinHandle},
 };
 
 use rocket::{http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
-use rppal::gpio::{Error as GPIOError, Gpio};
-use thiserror::Error as IsError;
+use rppal::gpio::{Gpio, OutputPin};
 
 pub use rocket::error::{LaunchError, LaunchErrorKind};
 
 #[macro_use]
 extern crate rocket;
 
+pub mod auto;
 mod consts;
+mod error;
 mod state;
 
 use consts::*;
+use error::*;
 use state::FanState;
-
-#[derive(Debug, IsError)]
-enum FanError {
-    #[error("Failed to interact with system IO")]
-    IOError(IOError),
-    #[error("Failed to parse integer from string")]
-    ParseIntError(ParseIntError),
-    #[error("Failed to open or interact with GPIO pin")]
-    GPIOError(GPIOError),
-    #[error("The given state is invalid")]
-    InvalidState(String),
-}
 
 fn get_tmp_inner() -> Result<i128, FanError> {
     let mut file = std::fs::File::open(TEMPERATURE_PATH).map_err(FanError::IOError)?;
@@ -46,13 +35,16 @@ fn get_tmp_inner() -> Result<i128, FanError> {
         .map_err(FanError::ParseIntError)
 }
 
-impl From<FanError> for Custom<FanError> {
-    fn from(error: FanError) -> Self {
-        Custom(Status::InternalServerError, error)
-    }
-}
+pub fn get_pin() -> Result<OutputPin, FanError> {
+    let gpio = Gpio::new().map_err(FanError::GPIOError)?;
 
-type ResponseError = Custom<FanError>;
+    let pin = gpio
+        .get(FAN_PIN)
+        .map_err(FanError::GPIOError)?
+        .into_output();
+
+    Ok(pin)
+}
 
 #[get("/temp")]
 fn get_tmp() -> Result<String, ResponseError> {
