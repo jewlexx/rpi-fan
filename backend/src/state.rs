@@ -50,12 +50,7 @@ impl Config {
         let is_empty = file_contents.is_empty();
 
         if is_empty {
-            let cfg = Config::default();
-            let serialized = serde_json::to_string(&cfg)?;
-            file.write_all(serialized.as_bytes())
-                .map_err(ConfigError::Write)?;
-
-            Ok(cfg)
+            Config::reset()
         } else {
             let cfg = serde_json::from_str(&file_contents)?;
 

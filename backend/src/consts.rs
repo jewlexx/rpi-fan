@@ -10,7 +10,14 @@ lazy_static! {
         ProjectDirs::from("", "jewelexx", "fan-control")
             .expect("failed to find project directories")
     };
-    pub static ref CONFIG_DIR: PathBuf = DIRS.config_dir().into();
+    pub static ref CONFIG_DIR: PathBuf = {
+        let dir: PathBuf = DIRS.config_dir().into();
+        if !dir.exists() {
+            std::fs::create_dir_all(&dir).unwrap();
+        }
+
+        dir
+    };
     pub static ref CONFIG: Mutex<Config> = const_mutex(Config::new().unwrap());
 }
 
