@@ -15,7 +15,4 @@ directories = "4.0.1"
 lazy_static = "1.4.0"
 serde_json = "1.0.81"
 serde = { version = "1.0.137", features = ["derive"] }
-
-[dependencies.rppal]
-git = "https://github.com/golemparts/rppal.git"
-rev = "54e54cbe17293044eaf77bc599631c0ecc572f91"
+gpio = { path = "../gpio" }

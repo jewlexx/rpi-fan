@@ -84,11 +84,11 @@ name = "backend"
 version = "0.1.0"
 dependencies = [
  "directories",
+ "gpio",
  "lazy_static",
  "parking_lot",
  "rocket",
  "rocket_contrib",
- "rppal",
  "serde",
  "serde_json",
  "strum",
@@ -531,6 +531,13 @@ dependencies = [
  "js-sys",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "gpio"
+version = "0.1.0"
+dependencies = [
+ "rppal",
 ]
 
 [[package]]
