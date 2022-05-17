@@ -1,7 +1,7 @@
 use std::{io::Error as IOError, num::ParseIntError};
 
 use rocket::{http::Status, response::status::Custom};
-use gpio::Error as GPIOError;
+use sys::gpio::Error as GPIOError;
 use thiserror::Error as IsError;
 
 use crate::state::ConfigError;

@@ -4,7 +4,7 @@ use std::thread::{self, JoinHandle};
 
 use rocket::{error::LaunchError, http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
-use gpio::{Gpio, OutputPin};
+use sys::gpio::{Gpio, OutputPin};
 
 #[macro_use]
 extern crate rocket;
