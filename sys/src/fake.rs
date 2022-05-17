@@ -44,8 +44,10 @@ pub mod gpio {
             self.is_high = false;
         }
 
-        pub fn toggle(&mut self) {
-            self.is_high = !self.is_high
+        pub fn toggle(&mut self) -> bool {
+            self.is_high = !self.is_high;
+
+            self.is_high
         }
     }
 
