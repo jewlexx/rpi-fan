@@ -6,4 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+cfg-if = "1.0.0"
 rppal = { git = "https://github.com/golemparts/rppal.git", rev = "54e54cbe17293044eaf77bc599631c0ecc572f91" }
