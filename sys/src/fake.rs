@@ -24,7 +24,7 @@ pub mod gpio {
     impl OutputPin {
         pub fn new() -> Self {
             Self {
-                is_high: rand::random(),
+                is_high: fastrand::bool(),
             }
         }
 
@@ -53,5 +53,11 @@ pub mod gpio {
         fn default() -> Self {
             Self::new()
         }
+    }
+}
+
+pub mod temp {
+    pub fn get_temp() -> i128 {
+        fastrand::i128(0..=80)
     }
 }
