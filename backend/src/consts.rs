@@ -13,7 +13,5 @@ lazy_static! {
     pub static ref CONFIG: Mutex<Config> = const_mutex(Config::new().unwrap());
 }
 
-// This is the path to the file that holds temp information
-pub const TEMPERATURE_PATH: &str = "/sys/class/thermal/thermal_zone0/temp";
-
+// This is the constant that holds the current temperature with some magic known as const mutex
 pub static TEMPERATURE: Mutex<i128> = const_mutex(0);
