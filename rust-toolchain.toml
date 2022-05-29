@@ -1,3 +1,2 @@
 [toolchain]
 channel = "nightly-2022-05-22"
-targets = [ "aarch64-unkown-linux-musl" ]
