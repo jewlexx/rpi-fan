@@ -1,4 +1,4 @@
-use std::fs::{File, Read};
+use std::{fs::File, io::Read};
 
 pub const TEMPERATURE_PATH: &str = "/sys/class/thermal/thermal_zone0/temp";
 
