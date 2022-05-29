@@ -8,7 +8,7 @@ async fn main() -> anyhow::Result<()> {
     let auto_thread = begin_monitoring();
 
     let res = server_thread.join().unwrap();
-    auto_thread.join().unwrap();
+    auto_thread.await?;
 
     eprintln!("{}", res);
 
