@@ -94,7 +94,6 @@ dependencies = [
  "strum",
  "sys",
  "thiserror",
- "tokio",
 ]
 
 [[package]]
