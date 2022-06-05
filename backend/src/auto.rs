@@ -1,12 +1,13 @@
 use std::{thread, time::Duration};
 
-use reqwest::get;
+use reqwest::blocking::get;
 use tokio::task::JoinHandle;
 
 use sys::temp::get_temp;
 
 use crate::{
     consts::{CONFIG, TEMPERATURE},
+    lock_inner_blocking,
     state::{set_fan_state, FanState},
 };
 
@@ -17,10 +18,11 @@ pub fn begin_monitoring() -> JoinHandle<()> {
     tokio::spawn(async {
         loop {
             let temp = get_temp();
-            *TEMPERATURE.lock() = temp;
+            let config = *lock_inner_blocking!(CONFIG);
+            *lock_inner_blocking!(TEMPERATURE) = temp;
 
-            let res = if temp > (*CONFIG.lock()).max_temp {
-                if let Err(e) = get(WEBHOOK_URL).await {
+            let res = if temp > config.max_temp {
+                if let Err(e) = get(WEBHOOK_URL) {
                     eprintln!("{}", e);
                 };
 
