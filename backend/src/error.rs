@@ -9,15 +9,17 @@ use crate::state::ConfigError;
 #[derive(Debug, IsError)]
 pub enum FanError {
     #[error("Failed to interact with system IO")]
-    IOError(IOError),
+    IOError(#[from] IOError),
     #[error("Failed to parse integer from string")]
-    ParseIntError(ParseIntError),
+    ParseIntError(#[from] ParseIntError),
     #[error("Failed to open or interact with GPIO pin")]
-    GPIOError(GPIOError),
-    #[error("The given state is invalid")]
-    InvalidState(String),
+    GPIOError(#[from] GPIOError),
     #[error("Failed to interact with config")]
     ConfigError(#[from] ConfigError),
+    #[error("The given state is invalid")]
+    InvalidState(String),
+    #[error("Failed to lock the required mutex")]
+    LockError,
 }
 
 pub type ResponseError = Custom<FanError>;

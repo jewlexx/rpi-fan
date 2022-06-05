@@ -2,6 +2,7 @@
 
 use std::thread::{self, JoinHandle};
 
+use enter::*;
 use rocket::{error::LaunchError, http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
 use sys::gpio::{Gpio, OutputPin};
@@ -14,8 +15,12 @@ extern crate lazy_static;
 
 mod auto;
 mod consts;
+mod enter;
 mod error;
 mod state;
+
+#[macro_use]
+mod utils;
 
 use consts::*;
 use error::*;
@@ -45,7 +50,7 @@ fn get_tmp() -> String {
     get_tmp_inner().to_string()
 }
 
-#[get("/fan/<state>")]
+#[patch("/fan/<state>")]
 fn set_fan(state: String) -> Result<String, ResponseError> {
     let mut cfg = Config::get();
     // These will actually mutate the fan's state
@@ -61,7 +66,7 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
     Ok(format!("Fan set to {}", set_fan_state(new_state)?))
 }
 
-#[get("/auto/<state>")]
+#[patch("/auto/<state>")]
 fn set_auto(state: String) -> Result<String, ResponseError> {
     let mut cfg = Config::get();
 
@@ -79,7 +84,7 @@ fn set_auto(state: String) -> Result<String, ResponseError> {
 
 pub fn run_server() -> JoinHandle<LaunchError> {
     thread::spawn(|| {
-        let routes = routes![get_tmp, set_fan, set_auto];
+        let routes = routes![get_tmp, set_fan, set_auto, get_enter, set_enter];
 
         let ign = rocket::ignite()
             .mount("/api", routes)

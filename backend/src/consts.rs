@@ -15,3 +15,5 @@ lazy_static! {
 
 // This is the constant that holds the current temperature with some magic known as const mutex
 pub static TEMPERATURE: Mutex<i128> = const_mutex(0);
+
+pub static CAN_ENTER: Mutex<bool> = const_mutex(true);
