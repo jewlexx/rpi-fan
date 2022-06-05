@@ -60,6 +60,6 @@ pub mod gpio {
 
 pub mod temp {
     pub fn get_temp() -> i128 {
-        fastrand::i128(0..=80)
+        fastrand::i128(0..=80) * 1000
     }
 }
