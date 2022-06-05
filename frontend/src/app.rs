@@ -14,7 +14,7 @@ pub fn app() -> Html {
         wasm_bindgen_futures::spawn_local(async move {
             let new_state = client
                 .clone()
-                .patch("/api/fan/toggle")
+                .patch("http://127.0.0.1:8000/api/fan/toggle")
                 .send()
                 .await
                 .unwrap()
@@ -34,7 +34,7 @@ pub fn app() -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     let client = create_client();
                     let new_temp = client
-                        .get("/api/temp")
+                        .get("http://127.0.0.1:8000/api/temp")
                         .send()
                         .await
                         .unwrap()
