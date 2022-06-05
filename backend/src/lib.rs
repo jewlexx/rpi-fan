@@ -2,7 +2,6 @@
 
 use std::thread::{self, JoinHandle};
 
-use enter::*;
 use rocket::{error::LaunchError, http::Status, response::status::Custom};
 use rocket_contrib::serve::StaticFiles;
 use sys::gpio::{Gpio, OutputPin};
@@ -15,8 +14,8 @@ extern crate lazy_static;
 
 mod auto;
 mod consts;
-mod enter;
 mod error;
+mod routes;
 mod state;
 
 #[macro_use]
@@ -83,6 +82,8 @@ fn set_auto(state: String) -> Result<String, ResponseError> {
 }
 
 pub fn run_server() -> JoinHandle<LaunchError> {
+    use routes::*;
+
     thread::spawn(|| {
         let routes = routes![get_tmp, set_fan, set_auto, get_enter, set_enter];
 
