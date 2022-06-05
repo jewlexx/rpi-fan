@@ -1,20 +1,14 @@
 use gloo_timers::callback::Interval;
+use reqwasm::http::Request;
 use yew::prelude::*;
-
-fn create_client() -> reqwest::Client {
-    reqwest::Client::new()
-}
 
 #[function_component(App)]
 pub fn app() -> Html {
     let temp = use_state(|| 0_i128);
 
     let toggle_fan = |_| {
-        let client = create_client();
         wasm_bindgen_futures::spawn_local(async move {
-            let new_state = client
-                .clone()
-                .patch("http://127.0.0.1:8000/api/fan/toggle")
+            let new_state = Request::patch("/api/fan/toggle")
                 .send()
                 .await
                 .unwrap()
@@ -32,9 +26,7 @@ pub fn app() -> Html {
             let interval = Interval::new(1000u32, move || {
                 let temp = temp.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let client = create_client();
-                    let new_temp = client
-                        .get("http://127.0.0.1:8000/api/temp")
+                    let new_temp = Request::get("/api/temp")
                         .send()
                         .await
                         .unwrap()
