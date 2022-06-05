@@ -28,12 +28,8 @@ use state::{set_fan_state, FanState};
 pub use auto::begin_monitoring;
 pub use state::Config;
 
-fn get_tmp_inner() -> i128 {
-    *TEMPERATURE.lock()
-}
-
 fn get_pin() -> Result<OutputPin, FanError> {
-    let cfg = Config::get();
+    let cfg = Config::get()?;
     let gpio = Gpio::new().map_err(FanError::GPIOError)?;
 
     let pin = gpio
@@ -45,13 +41,15 @@ fn get_pin() -> Result<OutputPin, FanError> {
 }
 
 #[get("/temp")]
-fn get_tmp() -> String {
-    get_tmp_inner().to_string()
+fn get_tmp() -> Result<String, ResponseError> {
+    let temp = lock_inner!(TEMPERATURE)?;
+
+    Ok(temp.to_string())
 }
 
 #[patch("/fan/<state>")]
 fn set_fan(state: String) -> Result<String, ResponseError> {
-    let mut cfg = Config::get();
+    let mut cfg = Config::get()?;
     // These will actually mutate the fan's state
     let new_state: Option<FanState> = match state.as_str() {
         "on" | "off" => Some(state.into()),
@@ -67,7 +65,7 @@ fn set_fan(state: String) -> Result<String, ResponseError> {
 
 #[patch("/auto/<state>")]
 fn set_auto(state: String) -> Result<String, ResponseError> {
-    let mut cfg = Config::get();
+    let mut cfg = Config::get()?;
 
     let new_state: bool = match state.as_str() {
         "on" | "off" => state == "on",

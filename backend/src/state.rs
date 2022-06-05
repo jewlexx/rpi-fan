@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use strum::Display;
 use thiserror::Error as IsError;
 
-use crate::{consts::CONFIG_DIR, error::FanError, get_pin};
+use crate::{consts::CONFIG_DIR, error::FanError, get_pin, lock_inner};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq, Eq)]
 pub struct Config {
@@ -63,10 +63,12 @@ impl Config {
         }
     }
 
-    pub fn get() -> Self {
+    pub fn get() -> Result<Self, FanError> {
         use crate::consts::CONFIG;
 
-        *CONFIG.lock()
+        let cfg = lock_inner!(CONFIG)?;
+
+        Ok(*cfg)
     }
 
     fn write_config(cfg: &Config) -> Result<(), ConfigError> {
@@ -94,7 +96,7 @@ impl Config {
 }
 
 pub fn set_fan_state(state_opt: Option<FanState>) -> Result<FanState, FanError> {
-    let mut cfg = Config::get();
+    let mut cfg = Config::get()?;
     let mut pin = get_pin()?;
 
     let updated_state: FanState = if let Some(state) = state_opt {
