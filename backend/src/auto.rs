@@ -1,7 +1,9 @@
-use std::{thread, time::Duration};
+use std::{
+    thread::{self, JoinHandle},
+    time::Duration,
+};
 
 use reqwest::blocking::get;
-use tokio::task::JoinHandle;
 
 use sys::temp::get_temp;
 
@@ -15,27 +17,25 @@ const WEBHOOK_URL: &str =
     "https://maker.ifttt.com/trigger/temperature/with/key/bVBRTPY7TqwKOPzIFwf_M0";
 
 pub fn begin_monitoring() -> JoinHandle<()> {
-    tokio::spawn(async {
-        loop {
-            let temp = get_temp();
-            let config = *lock_inner_blocking!(CONFIG);
-            *lock_inner_blocking!(TEMPERATURE) = temp;
+    thread::spawn(|| loop {
+        let temp = get_temp();
+        let config = *lock_inner_blocking!(CONFIG);
+        *lock_inner_blocking!(TEMPERATURE) = temp;
 
-            let res = if temp > config.max_temp {
-                if let Err(e) = get(WEBHOOK_URL) {
-                    eprintln!("{}", e);
-                };
-
-                set_fan_state(Some(FanState::On))
-            } else {
-                set_fan_state(Some(FanState::Off))
+        let res = if temp > config.max_temp {
+            if let Err(e) = get(WEBHOOK_URL) {
+                eprintln!("{}", e);
             };
 
-            if let Err(e) = res {
-                eprintln!("{}", e);
-            }
+            set_fan_state(Some(FanState::On))
+        } else {
+            set_fan_state(Some(FanState::Off))
+        };
 
-            thread::sleep(Duration::from_secs(1));
+        if let Err(e) = res {
+            eprintln!("{}", e);
         }
+
+        thread::sleep(Duration::from_secs(1));
     })
 }

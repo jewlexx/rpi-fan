@@ -7,10 +7,11 @@ async fn main() -> anyhow::Result<()> {
     let server_thread = run_server();
     let auto_thread = begin_monitoring();
 
-    let res = server_thread.join().unwrap();
-    auto_thread.await?;
+    eprintln!("{}", server_thread.join().unwrap());
 
-    eprintln!("{}", res);
+    if let Err(e) = auto_thread.join() {
+        eprintln!("{:?}", e);
+    }
 
     Ok(())
 }
